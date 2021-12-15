@@ -69,6 +69,7 @@ app.post("/register-new-user", async (req, res) => {
     });
   } catch (error) {
     console.log(error, "new user cannot be created");
+    res.json({ status: "error" });
   }
   res.json({ status: "ok" });
 });
@@ -88,7 +89,7 @@ app.post("/login-user", async (req, res) => {
       },
       JWT_SECRET
     );
-    console.log(user.status,'stat')
+    console.log(user.status, "stat");
     if (res.status(201)) {
       return res.json({ status: "ok", data: token });
     } else {
@@ -117,6 +118,30 @@ app.post("/user-details", async (req, res) => {
       });
   } catch (error) {
     console.log(error);
+    res.json({ status: "error", error: error });
+  }
+});
+
+app.post("/set-user-details", (req, res) => {
+  const { token, fields } = req.body;
+  try {
+    const user = jwt.verify(token, JWT_SECRET);
+    console.log(user,'user');
+    const guestid = user.guestId;
+    User.updateOne(
+      {
+        guestId: guestid,
+      },
+      {
+        $set: fields,
+      },
+      { overwrite: false, new: true },
+      function (err, res) {
+        console.log(err, res);
+      }
+    );
+    return res.json({ status: "ok", data: "updated" });
+  } catch (error) {
     res.json({ status: "error", error: error });
   }
 });
