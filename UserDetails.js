@@ -8,9 +8,11 @@ const UserDetailSchema = new mongoose.Schema(
     password: String,
     guestId: { type: String, unique: true },
     token: String,
-    gender:String,
-    profession:String,
-    profile:String
+    gender: String,
+    profession: String,
+    profile: String,
+    booksUploaded: Array,
+   
   },
   { collection: "UserInfo" }
 );
