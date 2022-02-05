@@ -277,13 +277,25 @@ app.post("/get-user-uploadedbooks", async (req, res) => {
 });
 
 app.post("/get-book-details", async (req, res) => {
-  Books.find({ status: 0 })
-    .then((data) => {
-      res.json({ status: "ok", data: data });
-    })
-    .catch((err) => {
-      res.json({ status: "ok", error: err });
-    });
+  const { status } = req.body;
+
+  if (status == "all") {
+    Books.find({})
+      .then((data) => {
+        res.json({ status: "ok", data: data });
+      })
+      .catch((err) => {
+        res.json({ status: "ok", error: err });
+      });
+  } else {
+    Books.find({ status: status })
+      .then((data) => {
+        res.json({ status: "ok", data: data });
+      })
+      .catch((err) => {
+        res.json({ status: "ok", error: err });
+      });
+  }
 });
 // app.post("/get-book-details", async (req, res, next) => {
 //   const requestCount = req.query.count;
@@ -316,14 +328,22 @@ app.post("/get-review", async (req, res) => {
       const count = data[0].review.length;
       const finaldata = 0;
       if (requestCount > count) {
-        res.json({ status: "finish", data: data[0].review.slice(0, count) });
+        const a = data[0].review.reverse();
+        res.json({
+          status: "finish",
+          data: a.slice(0, count),
+        });
         // const error = new Error("invalid request in quantity");
         // error.statusCode = 400;
         // throw error;
       } else {
-        console.log(count, "aaaaa");
+        const a = data[0].review.reverse();
+        console.log(a.slice(0, requestCount), "aaaaa");
 
-        res.json({ status: "ok", data: data[0].review.slice(0, requestCount) });
+        res.json({
+          status: "ok",
+          data: a.slice(0, requestCount),
+        });
       }
     })
     .catch((err) => {
